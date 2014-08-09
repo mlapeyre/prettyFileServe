@@ -51,49 +51,50 @@ func TestIndexShouldBeReturnedIfTheParanetFolderIsRequested(t *testing.T) {
 	tmpPath, server := createAndStartServer(t)
 	defer os.RemoveAll(tmpPath)
 	defer server.Close()
-	createFileWithContent(filepath.Join(tmpPath,"index.html"),"content",t)
-	pageContent := doGetAsString(server.URL,t)
-	assertEquals("content",pageContent,t)
+	createFileWithContent(filepath.Join(tmpPath, "index.html"), "content", t)
+	pageContent := doGetAsString(server.URL, t)
+	assertEquals("content", pageContent, t)
 }
+
 func TestCorrectFileShouldBeReturnedIfAvailable(t *testing.T) {
 	tmpPath, server := createAndStartServer(t)
 	defer os.RemoveAll(tmpPath)
 	defer server.Close()
-	createFileWithContent(filepath.Join(tmpPath,"random.txt"),"my txt content",t)
-	pageContent := doGetAsString(server.URL + "/random.txt",t)
-	assertEquals("my txt content",pageContent,t)
+	createFileWithContent(filepath.Join(tmpPath, "random.txt"), "my txt content", t)
+	pageContent := doGetAsString(server.URL+"/random.txt", t)
+	assertEquals("my txt content", pageContent, t)
 }
 
 //========================================================================================
 //  Utils
 //========================================================================================
 
-func createFileWithContent(fullPath string, content string,t *testing.T){
+func createFileWithContent(fullPath string, content string, t *testing.T) {
 	_, err := os.Create(fullPath)
-	failIfNotNil(err,t)
+	failIfNotNil(err, t)
 	contentAsByte := []byte(content)
 	err2 := ioutil.WriteFile(fullPath, contentAsByte, 0777)
-	failIfNotNil(err2,t)
+	failIfNotNil(err2, t)
 }
 
-func createAndStartServer(t *testing.T) (string,* httptest.Server) {
+func createAndStartServer(t *testing.T) (string, * httptest.Server) {
 	tmpPath, err := ioutil.TempDir(os.TempDir(), "go-test")
-	failIfNotNil(err,t)
+	failIfNotNil(err, t)
 	handlerDefinition := New("/", tmpPath)
 	server := httptest.NewServer(http.HandlerFunc(handlerDefinition.CreateHandler()))
-	return tmpPath,server
+	return tmpPath, server
 }
 
 func doGetAsString(url string, t *testing.T) (string) {
 	res, err := http.Get(url)
-	failIfNotNil(err,t)
+	failIfNotNil(err, t)
 	content, err := ioutil.ReadAll(res.Body)
 	res.Body.Close()
-	failIfNotNil(err,t)
+	failIfNotNil(err, t)
 	return string(content[:])
 }
 
-func failIfNotNil(err error,t *testing.T){
+func failIfNotNil(err error, t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 		t.Fail()

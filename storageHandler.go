@@ -23,7 +23,7 @@ func New(urlBase string, internalPath string) *StorageHandlerDefinition {
 }
 
 func (handler *StorageHandlerDefinition) CreateHandler() func(w http.ResponseWriter, r *http.Request) {
-	return func(response http.ResponseWriter, request *http.Request)  {
+	return func(response http.ResponseWriter, request *http.Request) {
 		realPath := resolveRealPath(handler, request.URL.Path)
 		fileInfo, err := os.Stat(realPath)
 		if (err != nil) {
@@ -34,37 +34,28 @@ func (handler *StorageHandlerDefinition) CreateHandler() func(w http.ResponseWri
 		}else {
 			if (fileInfo.IsDir()) {
 				if (hasIndexFile(realPath)) {
-					sendFile(response, request, filepath.Join(realPath, "index.html"))
+					serveFile(response, request, filepath.Join(realPath, "index.html"))
 				}else {
-					sendDirectoryView(response,request,realPath)
+					serveDirectoryView(response, request, realPath)
 				}
 			}else {
-				sendFile(response, request, realPath)
+				serveFile(response, request, realPath)
 			}
 		}
 	}
 }
 
-func sendFile(response http.ResponseWriter, request *http.Request, filePath string){
+func serveFile(response http.ResponseWriter, request *http.Request, filePath string) {
 	http.ServeFile(response, request, filePath)
 }
 
-func sendDirectoryView(response http.ResponseWriter, request *http.Request, directoryPath string) {
-	//TODO CHANGE ME ASAP
-	listTemplate, err := template.ParseFiles("/home/martial/projects/go-path/go-server/resources/templates/listFolder/template.html")
-	if(err!=nil){
+func serveDirectoryView(response http.ResponseWriter, request *http.Request, directoryPath string) {
+	listTemplate := template.Must(template.ParseFiles("./resources/template.html"))
+	children, _ := ioutil.ReadDir(directoryPath)
+	err := listTemplate.Execute(response, children)
+	if (err != nil) {
 		log.Fatal(err)
-	}else{
-		children, _ := ioutil.ReadDir(directoryPath)
-		err2 := listTemplate.Execute(response, children)
-		if(err2 != nil){
-			log.Fatal(err2)
-		}
 	}
-
-	//for _, child := range children {
-	//	fmt.Fprintf(w, "Name :%s", child.Name(),request)
-	//}
 }
 
 func hasIndexFile(folderPath string) bool {
