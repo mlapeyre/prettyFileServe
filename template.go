@@ -1,4 +1,7 @@
-<!DOCTYPE html>
+package prettyFileServe
+
+func getListTemplate() string {
+	return `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -33,3 +36,7 @@
     </div>
 </div>
 </body>
+`
+	
+}
+
