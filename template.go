@@ -15,7 +15,6 @@ func getListTemplate() string {
         <table class="table table-condensed table-hover table-striped">
             <thead>
             <tr>
-                <th></th>
                 <th>Name</th>
                 <th>Size</th>
                 <th>Rights</th>
@@ -37,6 +36,5 @@ func getListTemplate() string {
 </div>
 </body>
 `
-	
 }
 

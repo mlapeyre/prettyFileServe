@@ -50,7 +50,7 @@ func serveFile(response http.ResponseWriter, request *http.Request, filePath str
 }
 
 func serveDirectoryView(response http.ResponseWriter, request *http.Request, directoryPath string) {
-	listTemplate := template.Must(template.ParseGlob(getListTemplate()))
+	listTemplate := template.Must(template.New("list-template").Parse(getListTemplate()))
 	children, _ := ioutil.ReadDir(directoryPath)
 	err := listTemplate.Execute(response, children)
 	if (err != nil) {
